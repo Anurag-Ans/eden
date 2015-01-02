@@ -1299,13 +1299,12 @@ class S3BudgetAllocationModel(S3Model):
                                           writable = True,
                                           represent = self.budget_CostItemRepresent(),
                                           ),
-                          # @ToDo: s3_datetime
-                          s3_date("start_date",
-                                  label = T("Start Date")
-                                  ),
-                          s3_date("end_date",
-                                  label = T("End Date")
-                                  ),
+                          s3_datetime("start_date",
+                                      label = T("Start Date")
+                                      ),
+                          s3_datetime("end_date",
+                                      label = T("End Date")
+                                      ),
                           Field("unit_cost", "double",
                                 default = 0.00,
                                 label = T("One-Time Cost"),

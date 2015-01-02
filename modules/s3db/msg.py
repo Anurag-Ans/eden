@@ -582,7 +582,8 @@ class S3EmailModel(S3ChannelModel):
         tablename = "msg_email_channel"
         define_table(tablename,
                      # Instance
-                     super_link("channel_id", "msg_channel"),
+                     super_link("message_id", "msg_message"),
+                     self.msg_channel_id(),
                      Field("name"),
                      Field("description"),
                      Field("enabled", "boolean",

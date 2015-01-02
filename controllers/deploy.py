@@ -637,8 +637,6 @@ def email_inbox():
 def email_channel():
     """
         RESTful CRUD controller for Inbound Email channels
-
-        @ToDo: Allow selection of a specific Channel for Alerts
     """
 
     def prep(r):
