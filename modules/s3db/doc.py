@@ -28,6 +28,7 @@
 """
 
 __all__ = ("S3DocumentLibrary",
+           "S3DocumentLocation",
            "S3DocSitRepModel",
            "doc_image_represent",
            "doc_document_list_layout",
@@ -45,7 +46,6 @@ class S3DocumentLibrary(S3Model):
     names = ("doc_entity",
              "doc_document",
              "doc_document_id",
-             "doc_document_location",
              "doc_image",
              )
 
@@ -185,19 +185,6 @@ class S3DocumentLibrary(S3Model):
             msg_list_empty = T("No Documents found")
         )
 
-        crud_form = S3SQLCustomForm("name",
-                                    "file",
-                                    "url",
-                                    "person_id",
-                                    "date",
-                                    "has_been_indexed",
-                                    "mime_type",
-                                    "checksum",
-                                    S3SQLInlineLink("document_location",
-                                                    label="", # Change this when the field is enabled
-                                                    field="location_id"),
-                                    )
-
         # Search Method
 
         # Resource Configuration
@@ -213,7 +200,6 @@ class S3DocumentLibrary(S3Model):
                              "person": "person_id",
                              "site": "site_id",
                              },
-                  crud_form = crud_form,
                   deduplicate = self.document_duplicate,
                   list_layout = doc_document_list_layout,
                   onaccept = onaccept,
@@ -237,20 +223,12 @@ class S3DocumentLibrary(S3Model):
                                                            represent),
                                       )
         self.add_components(tablename,
-                            doc_document_location={"link": "doc_document_location",
-                                                   "key": "document_id",
-                                                   "joinby": "location_id"})
-        # ---------------------------------------------------------------------
-        # Document <> Location Link Table
-        #
-        tablename = "doc_document_location"
-        define_table(tablename,
-                     document_id(),
-                     location_id(# Enable when-required
-                                 readable = False,
-                                 writable = False,
-                                )
-                    )
+                            doc_document_location = {"link": "doc_document_location",
+                                                     "key": "document_id",
+                                                     "joinby": "location_id"},
+
+                            document_location = "document_id")
+
         # ---------------------------------------------------------------------
         # Images
         #
@@ -659,6 +637,25 @@ def doc_document_list_layout(list_id, item_id, resource, rfields, record):
                )
 
     return item
+
+# =============================================================================
+class S3DocumentLocation(S3Model):
+    """
+        Document Location
+    """
+
+    names = ("doc_document_location")
+
+    def model(self):
+        # ---------------------------------------------------------------------
+        # Document <> Location Link Table
+        #
+        self.define_table("doc_document_location",
+                          self.doc_document_id(),
+                          self.gis_location_id()
+                          )
+
+        return dict()
 
 # =============================================================================
 class doc_DocumentRepresent(S3Represent):

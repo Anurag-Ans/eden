@@ -83,13 +83,14 @@ def nzseel1_rheader(r, tabs=[]):
                 if location:
                     location = table.location_id.represent(location)
                 person = assess.person_id
+                ctable = s3db.pr_contact
                 if person:
                     query = (db.pr_person.id == person)
                     pe_id = db(query).select(db.pr_person.pe_id,
                                              limitby=(0, 1)).first().pe_id
-                    query = (s3db.pr_contact.pe_id == pe_id) & \
-                            (s3db.pr_contact.contact_method == "SMS")
-                    mobile = db(query).select(s3db.pr_contact.value,
+                    query = (ctable.pe_id == pe_id) & \
+                            (ctable.contact_method == "SMS")
+                    mobile = db(query).select(ctable.value,
                                               limitby=(0, 1)).first()
                     if mobile:
                         mobile = mobile.value
@@ -291,25 +292,6 @@ def timeline():
     inspection = []
     creation = []
 
-    building_estimated_damage_image = {
-        1:"tic.png",
-        2:"1percent.png",
-        3:"10percent.png",
-        4:"10-30percent.png",
-        5:"30-60percent.png",
-        6:"60-100percent.png",
-        7:"cross.png",
-    }
-
-    building_estimated_damage = {
-        1:T("None"),
-        2:"0-1%",
-        3:"1-10%",
-        4:"10-30%",
-        5:"30-60%",
-        6:"60-100%",
-        7:"100%"
-    }
     # raw SQL command
     # select `date`, estimated_damage FROM building_nzseel1 WHERE deleted = "F" ORDER BY `date` DESC
 
@@ -337,8 +319,8 @@ def timeline():
     return dict(inspection=inspection,
                 creation=creation,
                 totals= totals,
-                building_estimated_damage_image=building_estimated_damage_image,
-                building_estimated_damage=building_estimated_damage
+                building_estimated_damage_image=s3db.building_estimated_damage_image,
+                building_estimated_damage=s3db.building_estimated_damage
                 )
 
 # -----------------------------------------------------------------------------
@@ -356,26 +338,6 @@ def adminLevel():
                                 ltable.parent,
                                 tableNZ1.estimated_damage
                                )
-
-    building_estimated_damage_image = {
-        1:"tic.png",
-        2:"1percent.png",
-        3:"10percent.png",
-        4:"10-30percent.png",
-        5:"30-60percent.png",
-        6:"60-100percent.png",
-        7:"cross.png",
-    }
-
-    building_estimated_damage = {
-        1:T("None"),
-        2:"0-1%",
-        3:"1-10%",
-        4:"10-30%",
-        5:"30-60%",
-        6:"60-100%",
-        7:"100%"
-    }
 
     result = []
     temp = {}
@@ -408,8 +370,8 @@ def adminLevel():
             name = T("Unknown")
         result.append((name, item))
     return dict(report=result,
-                building_estimated_damage_image=building_estimated_damage_image,
-                building_estimated_damage=building_estimated_damage
+                building_estimated_damage_image=s3db.building_estimated_damage_image,
+                building_estimated_damage=s3db.building_estimated_damage
                 )
 
 # -----------------------------------------------------------------------------

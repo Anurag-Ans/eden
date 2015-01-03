@@ -2147,12 +2147,10 @@ $.filterOptionsS3({
                     # "received" must not propagate:
                     del request.get_vars["received"]
                     # Set the items to being received
-                    auth = current.auth
-                    if r.http != 'GET':
-                        if auth.s3_has_permission("update", sendtable):
-                            db(sendtable.id == r.id).update(status = SHIP_STATUS_RECEIVED)
-                        if auth.s3_has_permission("update", tracktable):
-                            db(tracktable.send_id == r.id).update(status = TRACK_STATUS_ARRIVED)
+                    # @Todo Avoid DB updates in GETs
+                    db(sendtable.id == r.id).update(status = SHIP_STATUS_RECEIVED)
+                    db(tracktable.send_id == r.id).update(status = TRACK_STATUS_ARRIVED)
+
                     req_ref = record.req_ref
                     if req_ref:
                         # Update the Request Status

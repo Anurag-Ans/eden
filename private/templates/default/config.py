@@ -682,6 +682,8 @@ settings.gis.geonames_username = "eden_test"
 # Requests Management
 # Uncomment to disable Inline Forms in Requests module
 #settings.req.inline_forms = False
+# Uncomment to include Event in the CRUD form
+#settings.req.event_inline_link = True
 # Label for Inventory Requests
 #settings.req.type_inv_label = "Donations"
 # Label for People Requests
@@ -1138,7 +1140,7 @@ settings.modules = OrderedDict([
     # @ToDo: Port these Assessments to the Survey module
     #("building", Storage(
     #    name_nice = T("Building Assessments"),
-    #    description = "Building Safety Assessments",
+    #    #description = "Building Safety Assessments",
     #    restricted = True,
     #    module_type = 10,
     #)),

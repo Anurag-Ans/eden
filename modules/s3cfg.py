@@ -3022,6 +3022,12 @@ class S3Config(Storage):
         """
         return self.req.get("req_type", ["Stock", "People", "Other"])
 
+    def get_req_event_inline_link(self):
+        """
+            Whether to include req_event in the CRUD form
+        """
+        return self.req.get("event_inline_link", False)
+
     def get_req_type_inv_label(self):
         return current.T(self.req.get("type_inv_label", "Warehouse Stock"))
 

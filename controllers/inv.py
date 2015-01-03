@@ -16,6 +16,7 @@ if not settings.has_module(module):
 # -----------------------------------------------------------------------------
 def index():
     """ Module's Home Page """
+
     return s3db.cms_index(module, alt_function="index_alt")
 
 # -----------------------------------------------------------------------------

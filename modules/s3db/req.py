@@ -32,6 +32,7 @@ __all__ = ("S3RequestModel",
            "S3RequestSkillModel",
            "S3RequestRecurringModel",
            "S3RequestSummaryModel",
+           "S3RequestEventModel",
            "S3RequestTaskModel",
            "S3CommitModel",
            "S3CommitItemModel",
@@ -258,7 +259,6 @@ class S3RequestModel(S3Model):
                                     default = requester_default,
                                     empty = settings.get_req_requester_optional(),
                                     label = requester_label,
-                                    represent = req_RequesterRepresent(),
                                     #writable = False,
                                     comment = S3AddResourceLink(c="pr", f="person",
                                                                 vars = dict(child="requester_id",
@@ -541,19 +541,6 @@ class S3RequestModel(S3Model):
                    method="form",
                    action=self.req_form)
 
-        # ---------------------------------------------------------------------
-        # Link Table: Request <> Events
-        tablename = "req_req_event"
-        self.define_table(tablename,
-                          req_id(empty=False),
-                          self.event_event_id(
-                               default = session.s3.event,
-                               ondelete = "CASCADE",
-                               readable = False,
-                               writable = False,
-                               ),
-                          *s3_meta_fields())
-
         # Components
         tablename = "req_req"
         add_components(tablename,
@@ -579,6 +566,7 @@ class S3RequestModel(S3Model):
                                         "link": "req_req_event",
                                         "key": "event_id",
                                         },
+                       req_event = "req_id",
 
                        **{# Scheduler Jobs (for recurring requests)
                           S3Task.TASK_TABLENAME: {"name": "job",
@@ -752,13 +740,14 @@ $.filterOptionsS3({
                                   "comments"
                                   ],
                         ),
-                      S3SQLInlineLink(
-                        "req_event",
-                        label="",
-                        field = "event_id"
-                      ),
                       "comments",
                       ]
+            print settings
+            if settings.get_req_event_inline_link():
+                fields.append(S3SQLInlineLink("req_event",
+                                              label="Event",
+                                              field = "event_id"
+                                              ))
             if method == "update":
                 if settings.get_req_status_writable():
                     fields.insert(7, "fulfil_status")
@@ -825,13 +814,14 @@ $.filterOptionsS3({
                                   "comments"
                                   ]
                       ),
-                      S3SQLInlineLink(
-                        "req_event",
-                        label="",
-                        field = "event_id"
-                      ),
                       "comments",
                       ]
+
+            if settings.get_req_event_inline_link():
+                fields.append(S3SQLInlineLink("req_event",
+                                              label="Event",
+                                              field = "event_id"
+                                              ))
             if method == "update":
                 if settings.get_req_status_writable():
                     fields.insert(8, "fulfil_status")
@@ -2349,6 +2339,33 @@ class S3RequestSummaryModel(S3Model):
                              "site": "site_id",
                              },
                   )
+
+        # ---------------------------------------------------------------------
+        # Pass names back to global scope (s3.*)
+        #
+        return dict()
+
+# =============================================================================
+class S3RequestEventModel(S3Model):
+    """
+        Link Requests to Events
+    """
+    names = ("req_req_event")
+
+    def model(self):
+
+        # ---------------------------------------------------------------------
+        # Link Table: Request <> Events
+        #
+        self.define_table("req_req_event",
+                          self.req_req_id(empty=False),
+                          self.event_event_id(
+                               default = current.session.s3.event,
+                               ondelete = "CASCADE",
+                               readable = False,
+                               writable = False,
+                               ),
+                          *s3_meta_fields())
 
         # ---------------------------------------------------------------------
         # Pass names back to global scope (s3.*)

@@ -236,6 +236,8 @@ def req_controller(template = False):
                 if r.http == "POST":
                     del r.get_vars["req.site_id"]
 
+            table.requester_id.represent = s3db.req_RequesterRepresent()
+
             # Set Fields and Labels depending on type
             if type:
                 table.type.default = type
@@ -1499,6 +1501,7 @@ def commit_item_json():
 def fema():
     """
         Custom Report to list all open requests for items that FEMA can supply
+
         @ToDo: Filter to just Sites that FEMA support
     """
 
