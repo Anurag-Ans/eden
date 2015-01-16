@@ -3,6 +3,10 @@
 */
 $(function (){
     var $assignBtn = $('#assign-role');
+    var loader = function(){
+        $assignBtn.button('loading');
+    };
+    $assignBtn.prop('data-loading-text', 'Loading...');
 
     $assignBtn.bind('click', function() {
 
@@ -38,6 +42,7 @@ $(function (){
                     $assignBtn.attr('data-id', new_id);
                     $assignBtn.html('<i class="icon-eye-close"></i><span>' + i18n.revert_role + '</span>');
                 }
+                $assignBtn.button('reset');
             };
         }
         else {
@@ -51,6 +56,7 @@ $(function (){
                     $assignBtn.attr('data-id', 'null');
                     $assignBtn.html('<i class="icon-eye-open"></i><span>' + i18n.assign_role + '</span>');
                 }
+                $assignBtn.button('reset');
             };
         }
         $.ajaxS3({
@@ -60,6 +66,7 @@ $(function (){
             data: data_json,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
+            beforeSend: loader,
             success: callback
         });
     });
